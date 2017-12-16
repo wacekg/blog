@@ -2,7 +2,7 @@ class ArticlesController < ApplicationController
   before_action :find_article, only: [:show, :edit, :update, :destroy]
 
   def index
-    @articles = Article.all.order(created_at: :desc)
+    @articles = Article.all.order(created_at: :asc)
   end
 
   def new
@@ -19,6 +19,7 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    @comment = Comment.new
   end
 
   def edit
@@ -39,7 +40,6 @@ class ArticlesController < ApplicationController
   end
 
   private
-
   def article_params
     params.require(:article).permit(:title, :text)
   end
