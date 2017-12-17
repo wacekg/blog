@@ -2,7 +2,12 @@ class ArticlesController < ApplicationController
   before_action :find_article, only: [:show, :edit, :update, :destroy]
 
   def index
-    @articles = Article.all.order(created_at: :asc)
+    @articles = Article.all.order(created_at: :desc)
+    if params[:q].present?
+      @articles = @articles.select do |article|
+        article.tags.include?(params[:q])
+      end
+    end
   end
 
   def new
@@ -19,7 +24,7 @@ class ArticlesController < ApplicationController
   end
 
   def show
-    @comment = Comment.new
+    @comment = Comment.new(commenter: session[:commenter])
   end
 
   def edit
@@ -41,7 +46,7 @@ class ArticlesController < ApplicationController
 
   private
   def article_params
-    params.require(:article).permit(:title, :text)
+    params.require(:article).permit(:title, :text, :tags)
   end
 
   def find_article

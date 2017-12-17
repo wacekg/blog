@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
   <head>
     <title>Blog</title>
     <%= csrf_meta_tags %>
@@ -9,6 +11,8 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="container">
+     <%= yield %>
+    </div>
   </body>
 </html>
