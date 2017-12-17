@@ -10,6 +10,30 @@
     <%= javascript_include_tag 'application' %>
   </head>
 
+< <body>
+    <% if notice %>
+      <div class="alert alert-info">
+      <%= notice %>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="alert danger">
+      <%= alert %>
+      </div>
+    <% end %>
+ </body>
+
+  <% if user_signed_in? %>
+    <li>
+      <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
+    </li>
+    <% else %>
+    <li>
+      <%= link_to('Login', new_user_session_path)  %>
+    </li>
+  <% end %>
+
   <body>
     <div class="container">
      <%= yield %>

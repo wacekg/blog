@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
   before_action :find_article, only: [:show, :edit, :update, :destroy]
-
+  before_action :authoriza_article, only: [:edit, :update, :destroy]
   def index
     @articles = Article.all.order(created_at: :desc)
     if params[:q].present?
@@ -16,6 +16,7 @@ class ArticlesController < ApplicationController
 
   def create
     @article = Article.new(article_params)
+    @article.author = current_user
     if @article.save
       redirect_to article_path(@article)
     else
@@ -48,6 +49,12 @@ class ArticlesController < ApplicationController
   def article_params
     params.require(:article).permit(:title, :text, :tags)
   end
+
+def authoriza_article
+  if @article.author != current_user
+    rededict_to article_path, alert: "Spadaj !!!"
+  end
+end
 
   def find_article
     @article = Article.find(params[:id])
