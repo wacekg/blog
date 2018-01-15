@@ -24,6 +24,9 @@
           <%= link_to "Usuń", article_path(article),
               method: :delete, data: { confirm: "Are you sure?" },
               class: "btn btn-xs btn-danger" %>
+          <%= link_to "Summary", summary_article_path(article), class: "
+            btn btn-xs btn-primary summary", id: "summary-#{article.id}" %>
+
         <% end %>
         <%=article.author.email%>
       </div>

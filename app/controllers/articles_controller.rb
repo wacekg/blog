@@ -1,11 +1,16 @@
 class ArticlesController < ApplicationController
-  before_action :find_article, only: [:show, :edit, :update, :destroy]
+  before_action :find_article, only: [:show, :edit, :update, :destroy, :summary]
   before_action :authoriza_article, only: [:edit, :update, :destroy]
   def index
-    @articles = Article.all.order(created_at: :desc)
-    if params[:q].present?
-      @articles = @articles.select do |article|
-        article.tags.include?(params[:q])
+    @articles = Article.includes(:author).order(created_at: :desc)
+    @articles = @articles.where("? = any(tags)", params[:q]) if params[:q].present?
+    respond_to do |format|
+      format.json do
+        render json: @articles
+      end
+
+      format.html do
+        render
       end
     end
   end
@@ -15,7 +20,7 @@ class ArticlesController < ApplicationController
   end
 
   def create
-    @article = Article.new(article_params)
+    @article = Article.new(permitted_attributes(Article))
     @article.author = current_user
     if @article.save
       redirect_to article_path(@article)
@@ -33,8 +38,7 @@ class ArticlesController < ApplicationController
   end
 
   def update
-    @article.attributes = article_params
-    if @article.save
+    if @article.update(permitted_attributes(@article))
       redirect_to article_path(@article)
     else
       render 'edit'
@@ -46,15 +50,24 @@ class ArticlesController < ApplicationController
     redirect_to articles_path
   end
 
+  def summary
+    respond_to do |format|
+      format.json do
+        render json: {
+          id: @article.id,
+          likes: @article.likes.count,
+          comments: @article.comments.count
+        }
+      end
+    end
+  # end
+
+end
+
   private
-  def article_params
-    params.require(:article).permit(:title, :text, :tags)
-  end
 
 def authoriza_article
-  if @article.author != current_user
-    rededict_to article_path, alert: "Spadaj !!!"
-  end
+  authorize @article
 end
 
   def find_article
