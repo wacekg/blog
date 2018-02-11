@@ -1,6 +1,6 @@
 class Like < ApplicationRecord
   belongs_to :user
-  belongs_to :article
+  belongs_to :likeable, polymorphic: true
 
-  validates :user, uniqueness: {scope: :article}
+  validates :user, uniqueness: { scope: :likeable, message: "already liked" }
 end
